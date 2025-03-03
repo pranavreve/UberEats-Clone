@@ -1,0 +1,45 @@
+.footer {
+    background-color: #f8f8f8;
+    padding: 40px 0;
+  }
+  .uberlogo {
+    max-width: 150px;
+  }
+  .footer-links {
+    list-style-type: none;
+    padding: 0;
+    margin: 0;
+  }
+  .footer-links li {
+    margin: 10px 0;
+    color: #333;
+    cursor: pointer;
+  }
+  .footer-links li:hover {
+    text-decoration: underline;
+  }
+  .store-img {
+    max-width: 150px;
+    margin-top: 10px;
+  }
+  .mt-3 {
+    margin-top: 20px;
+  }
+  .mt-2 {
+    margin-top: 10px;
+  }
+  .d-flex {
+    display: flex;
+  }
+  .flex-column {
+    flex-direction: column;
+  }
+  .align-items-start {
+    align-items: flex-start;
+  }
+  .store-links {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+  

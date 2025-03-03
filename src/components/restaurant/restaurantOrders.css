@@ -1,0 +1,273 @@
+/* General Styles */
+.figureClass {
+    position: relative;
+    margin: 0;
+  }
+  
+  .figureDiv {
+    width: 100%;
+    height: 240px;
+    overflow: hidden;
+  }
+  
+  .imginFig {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+  
+  .imgBck {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    min-height: 240px;
+  }
+  
+  .imgtxtContainer {
+    display: flex;
+    justify-content: space-between;
+    background: linear-gradient(0deg, rgba(0, 0, 0, 0.72), transparent);
+    padding: 20px;
+  }
+  
+  .imgtxtCo {
+    display: flex;
+    flex-direction: column;
+  }
+  
+  .imgtxtleftContainer h2 {
+    color: #fff;
+    margin-bottom: 0;
+  }
+  
+  .content-container {
+    padding: 20px;
+  }
+  
+  .restaurant-address {
+    font-size: 14px;
+    color: #545454;
+    margin-bottom: 20px;
+  }
+  
+  .order-status-tabs {
+    position: sticky;
+    top: 0;
+    background-color: #fff;
+    z-index: 100;
+    padding-top: 20px;
+  }
+  
+  .status-list {
+    display: flex;
+    list-style: none;
+    padding-left: 0;
+    margin-bottom: 0;
+  }
+  
+  .status-item {
+    margin-right: 20px;
+  }
+  
+  .status-item a {
+    text-decoration: none;
+    color: #000;
+    font-weight: bold;
+  }
+  
+  .horizontal-rule {
+    margin-top: 10px;
+    border: none;
+    height: 1px;
+    background-color: #e0e0e0;
+  }
+  
+  .orders-container {
+    margin-top: 20px;
+  }
+  
+  .order-status-section {
+    margin-bottom: 40px;
+  }
+  
+  .status-heading {
+    font-size: 24px;
+    font-weight: bold;
+    margin-bottom: 20px;
+  }
+  
+  .order-cards {
+    display: flex;
+    flex-wrap: wrap;
+  }
+  
+  .order-card {
+    width: 300px;
+    margin: 10px;
+    cursor: pointer;
+  }
+  
+  .order-card-content {
+    padding: 15px;
+  }
+  
+  .order-info {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  
+  .customer-name {
+    font-size: 18px;
+    font-weight: bold;
+    cursor: pointer;
+  }
+  
+  .order-details-button {
+    cursor: pointer;
+  }
+  
+  .order-date,
+  .order-address {
+    font-size: 14px;
+    color: #666;
+    margin-top: 10px;
+  }
+  
+  .modal-box {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background: white;
+    width: 500px;
+    max-width: 90%;
+    border-radius: 8px;
+    box-shadow: 0px 4px 15px rgba(0, 0, 0, 0.2);
+    overflow: hidden;
+  }
+  
+  .modal-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 15px;
+    background: #f5f5f5;
+    border-bottom: 1px solid #ddd;
+  }
+  
+  .modal-header h2 {
+    margin: 0;
+  }
+  
+  .close-button {
+    background: none;
+    border: none;
+    font-size: 24px;
+    cursor: pointer;
+  }
+  
+  .modal-content {
+    padding: 15px;
+  }
+  
+  .order-items,
+  .customer-profile {
+    margin-bottom: 20px;
+  }
+  
+  .order-item,
+  .customer-info {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 10px;
+  }
+  
+  .item-name {
+    flex: 2;
+  }
+  
+  .item-quantity,
+  .item-price {
+    flex: 1;
+    text-align: right;
+  }
+  
+  .modal-total {
+    display: flex;
+    justify-content: space-between;
+    font-weight: bold;
+    margin-top: 15px;
+    border-top: 1px solid #ddd;
+    padding-top: 10px;
+  }
+  
+  .order-status-actions {
+    display: flex;
+    justify-content: space-around;
+    margin-top: 20px;
+  }
+  
+  .status-button {
+    padding: 10px 20px;
+    background-color: #3e9920;
+    color: #fff;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+  }
+  
+  .status-button:hover {
+    background-color: #2f7318;
+  }
+  
+  .customer-avatar {
+    width: 100px;
+    height: 100px;
+    border-radius: 50%;
+    object-fit: cover;
+    margin-right: 20px;
+  }
+  
+  .customer-info {
+    flex: 1;
+  }
+  
+  .customer-name {
+    font-size: 20px;
+    font-weight: bold;
+    margin-bottom: 10px;
+  }
+  
+  .customer-email,
+  .customer-phone {
+    font-size: 16px;
+    color: #666;
+    margin-bottom: 5px;
+  }
+  
+  @media (max-width: 768px) {
+    .order-cards {
+      flex-direction: column;
+      align-items: center;
+    }
+  
+    .order-card {
+      width: 100%;
+    }
+  
+    .modal-box {
+      width: 90%;
+    }
+  
+    .customer-profile {
+      flex-direction: column;
+      align-items: center;
+      text-align: center;
+    }
+  
+    .customer-avatar {
+      margin-bottom: 15px;
+    }
+  }
+  

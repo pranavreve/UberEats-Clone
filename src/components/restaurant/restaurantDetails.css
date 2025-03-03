@@ -1,0 +1,56 @@
+.formC {
+  width: 90%;
+  margin: 0 auto;
+  background-color: #fff;
+}
+
+.innerformC {
+  background-color: #fff;
+  box-shadow: 0 2px 8px hsla(0, 0%, 0%, 0.16);
+  padding: 64px 48px 48px 48px;
+  width: 100%;
+}
+
+.txtbox {
+  width: 100%;
+  padding: 8px 18px;
+  font-size: 16px;
+  margin-bottom: 15px;
+  border: 1px solid #e0e0e0;
+}
+
+.txtbox:focus {
+  outline-color: #43a422;
+  border-color: #43a422;
+}
+
+.custom-file-upload {
+  display: inline-block;
+  cursor: pointer;
+  color: #3e9920;
+}
+
+.btnn {
+  width: 100%;
+  background-color: #3e9920;
+  color: #fff;
+  padding: 11px 20px;
+  margin-top: 20px;
+  border: none;
+  cursor: pointer;
+}
+
+.btnn:hover {
+  background-color: #2f7318;
+}
+
+.errtext {
+  color: red;
+  font-size: 12px;
+}
+
+@media screen and (max-width: 768px) {
+  .innerformC {
+    padding: 32px 24px;
+  }
+}

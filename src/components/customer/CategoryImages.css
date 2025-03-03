@@ -1,0 +1,28 @@
+/* CategoryImages.css */
+
+.category-images {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    margin-bottom: 20px;
+  }
+  
+  .category-item {
+    width: 100px;
+    margin: 10px;
+    text-align: center;
+  }
+  
+  .category-item img {
+    width: 100%;
+    height: auto;
+    border-radius: 8px;
+  }
+  
+  .category-item label {
+    display: block;
+    margin-top: 5px;
+    font-size: 14px;
+    color: #333;
+  }
+  

@@ -1,0 +1,113 @@
+/* customerDetails.css */
+
+.container {
+  max-width: 800px;
+  margin: 0 auto;
+  padding: 20px;
+}
+
+.formC {
+  background-color: #ffffff;
+  border: 1px solid #ddd;
+  border-radius: 5px;
+  padding: 30px;
+}
+
+.innerformC {
+  margin: 20px;
+}
+
+.txtbox,
+.txtareas {
+  width: 100%;
+  padding: 10px;
+  margin-bottom: 15px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  font-size: 16px;
+}
+
+.txtareas {
+  resize: vertical;
+}
+
+.errtext {
+  color: red;
+  font-size: 0.9em;
+  margin-bottom: 10px;
+  display: block;
+}
+
+.marginTop20 {
+  margin-top: 20px;
+}
+
+.marginTop25 {
+  margin-top: 25px;
+}
+
+.btnn {
+  background-color: #28a745;
+  color: white;
+  padding: 12px 30px;
+  margin-top: 20px;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 16px;
+}
+
+.btnn:hover {
+  background-color: #218838;
+}
+
+.custom-file-upload {
+  display: inline-block;
+  padding: 6px 12px;
+  cursor: pointer;
+  background-color: #007bff;
+  color: white;
+  border-radius: 4px;
+  font-size: 14px;
+}
+
+.custom-file-upload input[type="file"] {
+  display: none;
+}
+
+.uploadbtnDetails {
+  display: none;
+}
+
+.avatar-preview {
+  max-width: 100%;
+  height: auto;
+  border-radius: 50%;
+  object-fit: cover;
+}
+
+.error-message {
+  color: red;
+  font-size: 1em;
+  margin-bottom: 15px;
+  text-align: center;
+}
+
+@media (max-width: 768px) {
+  .col-md-6 {
+    width: 100%;
+    padding: 0;
+  }
+
+  .innerformC {
+    margin: 0;
+  }
+
+  .btnn {
+    width: 100%;
+  }
+
+  .row {
+    margin-left: 0 !important;
+  }
+}
