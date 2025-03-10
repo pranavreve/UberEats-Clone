@@ -1,172 +1,298 @@
 import React, { Component } from "react";
 import axios from "axios";
 import "./customerDetails.css";
+import "./countryCode.css";
+import { countries } from "./countryCode";
 import { Navigate } from "react-router-dom";
-import Navbar from "../navbar"; // Assuming navbar.js is the common navbar component
 import NavBar from "../navbar";
 import CustomerFooter from "../footer/customerFooter";
-
+import { FaUser, FaPhone, FaEnvelope, FaMapMarkerAlt } from 'react-icons/fa';
 
 class CustomerDetails extends Component {
   state = {
-    first_name: "",
-    last_name: "",
-    phone_number: "",
-    avatar: "",
-    selectedFile: null,
-    redirectToHome: false,
-    errors: {},
-    customer_id: 0
+    name: "",
+    email: "",
+    phone: "",
+    countryCode: "US", // Default country code
+    country: "",
+    state: "",
+    profile_image: "",
+    loading: true,
+    error: null,
+    success: false,
+    redirectToHome: false
   };
 
   componentDidMount() {
-    axios
-      .get(`${process.env.REACT_APP_UBEREATS_BACKEND_URL}/customer/profile/`, {
-        headers: {
-          Authorization: `Bearer ${sessionStorage.getItem("authToken")}`,
-        },
-      })
-      .then((response) => {
-        const data = response.data;
-        this.setState({
-          first_name: data.first_name,
-          last_name: data.last_name,
-          phone_number: data.phone_number,
-          avatar: data.avatar,
-          customer_id: data.id
-        });
-      })
-      .catch((error) => {
-        console.log(error);
-      });
+    this.loadProfileData();
   }
+
+  loadProfileData = async () => {
+    try {
+      const token = sessionStorage.getItem("authToken");
+      if (!token) {
+        this.setState({ redirectToHome: true });
+        return;
+      }
+
+      const response = await axios.get(
+        `${process.env.REACT_APP_UBEREATS_BACKEND_URL}/api/customers/profile`,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`
+          }
+        }
+      );
+
+      if (response.data.success) {
+        const profile = response.data.profile;
+        // Find country code from phone number if it exists
+        let countryCode = "US";
+        if (profile.phone) {
+          const matchingCountry = countries.find(country => 
+            profile.phone.startsWith(country.phone)
+          );
+          if (matchingCountry) {
+            countryCode = matchingCountry.code;
+          }
+        }
+
+        this.setState({
+          name: profile.name || "",
+          email: profile.email || "",
+          phone: profile.phone ? profile.phone.replace(/^\+\d+\s*/, '') : "", // Remove country code from phone
+          countryCode,
+          country: profile.country || "",
+          state: profile.state || "",
+          profile_image: profile.profile_image || "",
+          loading: false
+        });
+      }
+    } catch (error) {
+      console.error("Error loading profile:", error);
+      this.setState({
+        error: "Failed to load profile data",
+        loading: false
+      });
+    }
+  };
 
   handleInputChange = (event) => {
     const { name, value } = event.target;
-    this.setState({ [name]: value, errors: { ...this.state.errors, [name]: "" } });
+    this.setState({
+      [name]: value,
+      error: null
+    });
   };
 
-  handleFileChange = (e) => {
-    const file = e.target.files[0];
-    this.setState({ selectedFile: file });
+  handleCountryCodeChange = (event) => {
+    this.setState({
+      countryCode: event.target.value,
+      error: null
+    });
   };
 
-  handleProfileUpdate = () => {
-    const { first_name, last_name, phone_number, selectedFile } = this.state;
+  handleProfileUpdate = async () => {
+    try {
+      const token = sessionStorage.getItem("authToken");
+      if (!token) {
+        this.setState({ redirectToHome: true });
+        return;
+      }
 
-    if (!first_name || !last_name || !phone_number) {
-      this.setState({ errors: { form: "Please fill in all required fields." } });
-      return;
-    }
+      const { name, phone, countryCode, country, state } = this.state;
+      
+      // Get the phone code for the selected country
+      const selectedCountry = countries.find(c => c.code === countryCode);
+      const fullPhone = phone ? `${selectedCountry.phone}${phone}` : "";
 
-    const updateData = {
-      first_name,
-      last_name,
-      phone_number,
-    };
-
-    const updateProfile = () => {
-      axios
-        .put(
-          `${process.env.REACT_APP_UBEREATS_BACKEND_URL}/customer/${this.state.customer_id}/update/`,
-          updateData,
-          {
-            headers: {
-              Authorization: `Bearer ${sessionStorage.getItem("authToken")}`,
-            },
+      const response = await axios.put(
+        `${process.env.REACT_APP_UBEREATS_BACKEND_URL}/api/customers/profile`,
+        {
+          name,
+          phone: fullPhone,
+          country,
+          state
+        },
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+            'Content-Type': 'application/json'
           }
-        )
-        .then((response) => {
-          sessionStorage.setItem("customerDetails", JSON.stringify(response.data));
-          this.setState({ redirectToHome: true });
-        })
-        .catch((error) => {
-          console.log(error);
+        }
+      );
+
+      if (response.data.success) {
+        this.setState({
+          success: true,
+          error: null
         });
-    };
 
-    if (selectedFile) {
-      const formData = new FormData();
-      formData.append("avatar", selectedFile);
+        // Update session storage with new details
+        sessionStorage.setItem("customerDetails", JSON.stringify(response.data.profile));
 
-      axios
-        .post(
-          `${process.env.REACT_APP_UBEREATS_BACKEND_URL}/customer/upload/`,
-          formData,
-          {
-            headers: {
-              "Content-Type": "multipart/form-data",
-              Authorization: `Bearer ${sessionStorage.getItem("authToken")}`,
-            },
-          }
-        )
-        .then((res) => {
-          if (res.status === 201) {
-            updateData.avatar = res.data.location;
-            updateProfile();
-          }
-        })
-        .catch((err) => {
-          console.log(err);
-        });
-    } else {
-      updateProfile();
+        // Show success message for 2 seconds
+        setTimeout(() => {
+          this.setState({ success: false });
+        }, 2000);
+      }
+    } catch (error) {
+      console.error("Error updating profile:", error);
+      this.setState({
+        error: error.response?.data?.message || "Failed to update profile"
+      });
     }
   };
 
   render() {
-    const { redirectToHome, errors } = this.state;
+    const {
+      loading,
+      error,
+      success,
+      redirectToHome,
+      name,
+      email,
+      phone,
+      countryCode,
+      country,
+      state
+    } = this.state;
 
     if (redirectToHome) {
-      return <Navigate to="/customer/home" />;
+      return <Navigate to="/customer/login" />;
+    }
+
+    if (loading) {
+      return (
+        <div className="profile-container">
+          <NavBar />
+          <div className="loading">Loading profile data...</div>
+          <CustomerFooter />
+        </div>
+      );
     }
 
     return (
-      <div className="container">
-        <NavBar/>
-        <div className="formC">
-          <div className="innerformC">
-            <div className="row" style={{ textAlign: "center" }}>
-              <label>
-                <h4>Profile Details</h4>
-              </label>
+      <div className="profile-container">
+        <NavBar />
+        <div className="profile-content">
+          <div className="profile-header">
+            <h2>My Profile</h2>
+            <p>Manage your account details and preferences</p>
+          </div>
+
+          <div className="profile-form">
+            <div className="profile-section">
+              <h3>Personal Information</h3>
+              
+              <div className="form-group">
+                <label>
+                  <FaUser /> Full Name
+                </label>
+                <input
+                  type="text"
+                  name="name"
+                  value={name}
+                  onChange={this.handleInputChange}
+                  className="form-control"
+                  placeholder="Your full name"
+                />
+              </div>
+
+              <div className="form-group">
+                <label>
+                  <FaEnvelope /> Email
+                </label>
+                <input
+                  type="email"
+                  value={email}
+                  className="form-control"
+                  disabled
+                  placeholder="Your email"
+                />
+              </div>
+
+              <div className="form-group">
+                <label>
+                  <FaPhone /> Phone Number
+                </label>
+                <div className="phone-input-group">
+                  <div className="country-select country-code">
+                    <select
+                      value={countryCode}
+                      onChange={this.handleCountryCodeChange}
+                    >
+                      {countries.map(country => (
+                        <option key={country.code} value={country.code}>
+                          {country.phone} ({country.code})
+                        </option>
+                      ))}
+                    </select>
+                  </div>
+                  <input
+                    type="tel"
+                    name="phone"
+                    value={phone}
+                    onChange={this.handleInputChange}
+                    className="form-control phone-number"
+                    placeholder="Phone number without country code"
+                  />
+                </div>
+              </div>
             </div>
-            <div className="row" style={{ marginLeft: "5%" }}>
-              <div className="col-md-6">
+
+            <div className="profile-section">
+              <h3>Location Information</h3>
+              
+              <div className="form-group">
+                <label>
+                  <FaMapMarkerAlt /> Country
+                </label>
+                <div className="country-select">
+                  <select
+                    name="country"
+                    value={country}
+                    onChange={this.handleInputChange}
+                  >
+                    <option value="">Select Country</option>
+                    {countries.map(country => (
+                      <option key={country.code} value={country.name}>
+                        {country.name}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+              </div>
+
+              <div className="form-group">
+                <label>
+                  <FaMapMarkerAlt /> State
+                </label>
                 <input
-                  className="txtbox marginTop25"
-                  name="first_name"
-                  value={this.state.first_name}
-                  placeholder="First Name"
+                  type="text"
+                  name="state"
+                  value={state}
                   onChange={this.handleInputChange}
-                />
-                <input
-                  className="txtbox marginTop25"
-                  name="last_name"
-                  value={this.state.last_name}
-                  placeholder="Last Name"
-                  onChange={this.handleInputChange}
+                  className="form-control"
+                  placeholder="Your state"
                 />
               </div>
-              <div className="col-md-6">
-                <input
-                  className="txtbox marginTop25"
-                  name="phone_number"
-                  value={this.state.phone_number}
-                  placeholder="Phone Number"
-                  onChange={this.handleInputChange}
-                />
-              </div>
-              <div className="col-md-12">
-                {errors.form && <div className="error-message">{errors.form}</div>}
-                <button className="btnn" onClick={this.handleProfileUpdate}>
-                  Update Profile
-                </button>
-              </div>
+            </div>
+
+            {error && <div className="error-message">{error}</div>}
+            {success && <div className="success-message">Profile updated successfully!</div>}
+
+            <div className="profile-actions">
+              <button
+                className="update-button"
+                onClick={this.handleProfileUpdate}
+              >
+                Update Profile
+              </button>
             </div>
           </div>
         </div>
-        <CustomerFooter/>
+        <CustomerFooter />
       </div>
     );
   }

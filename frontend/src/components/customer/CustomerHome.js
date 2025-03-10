@@ -4,160 +4,165 @@ import CustomerFooter from "../footer/customerFooter";
 import "./CustomerHome.css";
 import axios from "axios";
 import { Navigate } from "react-router-dom";
-import { Radio, Space } from "antd";
-import { HeartOutlined, HeartFilled } from "@ant-design/icons";
+import { Radio, Space, Input } from "antd";
+import { HeartOutlined, HeartFilled, SearchOutlined } from "@ant-design/icons";
 import deals from "../../Images/deals.png";
 import RestaurantCard from "../restaurant/restaurantCard";
 import { Carousel } from 'antd';
-import Slider from "react-slick";
+
+// Define cuisine types for restaurants
+const cuisineTypes = {
+  1: "Italian",
+  2: "Mexican",
+  3: "Chinese",
+  4: "Indian",
+  5: "Japanese",
+  6: "American",
+  7: "Thai",
+  8: "Mediterranean",
+  9: "Vietnamese",
+  10: "Korean"
+};
 
 class CustomerHome extends Component {
   constructor(props) {
     super(props);
     this.state = {
       deliveryType: "",
+      searchQuery: "",
       restaurants: [],
+      filteredRestaurants: [],
       redirectToRestaurant: false,
       selectedRestaurantId: null,
-      favorites: [], // Array to hold favorite restaurant IDs
+      favorites: [],
     };
   }
 
   componentDidMount() {
     this.fetchRestaurants();
-    this.fetchFavorites(); // Fetch existing favorites
+    this.fetchFavorites();
   }
 
-  fetchRestaurants = () => {
-    const { deliveryType } = this.state;
-    let url = `${process.env.REACT_APP_UBEREATS_BACKEND_URL}/customer/restaurants/`;
-    if (deliveryType) {
-      url += `?deliveryType=${deliveryType}`;
-    }
-
-    axios
-      .get(url, {
-        headers: {
-          Authorization: `Bearer ${sessionStorage.getItem("authToken")}`,
-        },
-      })
-      .then((response) => {
-        if (response.status === 200) {
-          this.setState({ restaurants: response.data });
+  fetchRestaurants = async () => {
+    try {
+      const token = sessionStorage.getItem("authToken");
+      const response = await axios.get(
+        `${process.env.REACT_APP_UBEREATS_BACKEND_URL}/api/customers/restaurants`,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
         }
-      })
-      .catch((err) => {
-        console.log(err);
+      );
+
+      // Assign random cuisine types to restaurants if they don't have one
+      const restaurantsWithCuisine = response.data.restaurants.map(restaurant => ({
+        ...restaurant,
+        cuisine: restaurant.cuisine || cuisineTypes[Math.floor(Math.random() * 10) + 1]
+      }));
+
+      this.setState({
+        restaurants: restaurantsWithCuisine,
+        filteredRestaurants: restaurantsWithCuisine
       });
+    } catch (error) {
+      console.error("Error fetching restaurants:", error);
+    }
   };
 
-  fetchFavorites = () => {
-    axios
-      .get(`${process.env.REACT_APP_UBEREATS_BACKEND_URL}/customer/favorites/list/`, {
-        headers: {
-          Authorization: `Bearer ${sessionStorage.getItem("authToken")}`,
-        },
-      })
-      .then((response) => {
-        if (response.status === 200) {
-          const favoriteIds = response.data.map((favorite) => favorite.restaurant);
-          this.setState({ favorites: favoriteIds });
+  fetchFavorites = async () => {
+    try {
+      const token = sessionStorage.getItem("authToken");
+      const response = await axios.get(
+        `${process.env.REACT_APP_UBEREATS_BACKEND_URL}/api/customers/favorites`,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
         }
-      })
-      .catch((error) => {
-        console.error("Error fetching favorites:", error);
+      );
+      this.setState({
+        favorites: response.data.favorites.map(fav => fav.restaurant_id)
       });
+    } catch (error) {
+      console.error("Error fetching favorites:", error);
+    }
   };
 
   handleDeliveryTypeChange = (e) => {
-    this.setState({ deliveryType: e.target.value }, () => {
-      this.fetchRestaurants();
-    });
+    const deliveryType = e.target.value;
+    this.setState({ deliveryType }, this.filterRestaurants);
   };
 
-  redirectToRestaurant = (restaurantId) => {
+  handleSearchChange = (e) => {
+    const searchQuery = e.target.value;
+    this.setState({ searchQuery }, this.filterRestaurants);
+  };
+
+  filterRestaurants = () => {
+    const { restaurants, deliveryType, searchQuery } = this.state;
+    let filtered = [...restaurants];
+
+    if (deliveryType) {
+      filtered = filtered.filter(
+        (restaurant) => restaurant.delivery_type === deliveryType
+      );
+    }
+
+    if (searchQuery) {
+      const query = searchQuery.toLowerCase();
+      filtered = filtered.filter(
+        (restaurant) =>
+          restaurant.name.toLowerCase().includes(query) ||
+          restaurant.cuisine.toLowerCase().includes(query)
+      );
+    }
+
+    this.setState({ filteredRestaurants: filtered });
+  };
+
+  redirectToRestaurant = (id) => {
     this.setState({
-      selectedRestaurantId: restaurantId,
       redirectToRestaurant: true,
+      selectedRestaurantId: id,
     });
   };
 
-  toggleFavorite = (restaurantId) => {
-    const { favorites } = this.state;
-    const isFavorite = favorites.includes(restaurantId);
-
-    const url = `${process.env.REACT_APP_UBEREATS_BACKEND_URL}/customer/favorite/${
-      isFavorite ? "remove" : "add"
-    }/`;
-
-    // API call to add/remove favorite on the backend
-    axios
-      .post(
-        url,
-        { restaurant_id: restaurantId },
-        {
-          headers: {
-            Authorization: `Bearer ${sessionStorage.getItem("authToken")}`,
-          },
-        }
-      )
-      .then(() => {
-        this.setState((prevState) => ({
-          favorites: isFavorite
-            ? prevState.favorites.filter((id) => id !== restaurantId)
-            : [...prevState.favorites, restaurantId],
+  toggleFavorite = async (restaurantId, e) => {
+    e.stopPropagation();
+    try {
+      const token = sessionStorage.getItem("authToken");
+      const isFavorite = this.state.favorites.includes(restaurantId);
+      
+      if (isFavorite) {
+        await axios.delete(
+          `${process.env.REACT_APP_UBEREATS_BACKEND_URL}/api/customers/favorites/${restaurantId}`,
+          {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          }
+        );
+        this.setState(prevState => ({
+          favorites: prevState.favorites.filter(id => id !== restaurantId)
         }));
-      })
-      .catch((error) => {
-        console.error("Error toggling favorite:", error);
-      });
-  };
-
-  renderRestaurants = () => {
-    const { restaurants, favorites } = this.state;
-    return (
-      <div className="restaurant-list">
-        {restaurants.map((restaurant, index) => {
-          const isFavorite = favorites.includes(restaurant.id);
-          return (
-            <div
-              key={restaurant.id}
-              className={`restaurant-card-wrapper ${
-                restaurants.length % 2 !== 0 && index === restaurants.length - 1
-                  ? "full-width"
-                  : ""
-              }`}
-            >
-              <RestaurantCard
-                profilePicture={restaurant.profile_picture}
-                name={restaurant.name}
-                onClick={() => this.redirectToRestaurant(restaurant.id)}
-              />
-              <div className="favorite-icon" onClick={() => this.toggleFavorite(restaurant.id)}>
-                {isFavorite ? <HeartFilled style={{ color: "red" }} /> : <HeartOutlined />}
-              </div>
-            </div>
-          );
-        })}
-      </div>
-    );
-  };
-
-  renderCategoryImages = () => {
-    const categories = [
-      { imgSrc: deals, label: "Deals" },
-    ];
-
-    return (
-      <div className="category-images">
-        {categories.map((category, index) => (
-          <div className="category-item" key={index}>
-            <img src={category.imgSrc} alt={category.label} />
-            <label>{category.label}</label>
-          </div>
-        ))}
-      </div>
-    );
+      } else {
+        await axios.post(
+          `${process.env.REACT_APP_UBEREATS_BACKEND_URL}/api/customers/favorites`,
+          { restaurant_id: restaurantId },
+          {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          }
+        );
+        this.setState(prevState => ({
+          favorites: [...prevState.favorites, restaurantId]
+        }));
+      }
+    } catch (error) {
+      console.error("Error toggling favorite:", error);
+    }
   };
 
   renderCarousel = () => {
@@ -168,18 +173,60 @@ class CustomerHome extends Component {
       { src: 'https://images.unsplash.com/photo-1543353071-873f17a7a088', alt: 'Salad' }
     ];
     
-  
     return (
-      <Carousel autoplay autoplaySpeed={1000} dots style={{paddingTop: "10px"}}>
-        {carouselImages.map((image, index) => (
-          <div key={index}>
-            <img src={image.src} alt={image.alt} style={{ width: '100%', height: '250px', objectFit: 'cover' }} />
-          </div>
-        ))}
-      </Carousel>
+      <div className="carousel-section">
+        <Carousel autoplay autoplaySpeed={3000} dots>
+          {carouselImages.map((image, index) => (
+            <div key={index}>
+              <img src={image.src} alt={image.alt} style={{ width: '100%', height: '300px', objectFit: 'cover' }} />
+            </div>
+          ))}
+        </Carousel>
+      </div>
     );
   };
-  
+
+  renderRestaurants = () => {
+    const { filteredRestaurants, restaurants, favorites } = this.state;
+    const restaurantsToShow = filteredRestaurants.length > 0 ? filteredRestaurants : restaurants;
+
+    if (restaurantsToShow.length === 0) {
+      return (
+        <div className="no-restaurants-message">
+          No restaurants found.
+        </div>
+      );
+    }
+
+    return (
+      <div className="restaurant-list">
+        {restaurantsToShow.map((restaurant) => {
+          const restaurantId = restaurant.id || restaurant.restaurant_id;
+          const isFavorite = favorites.includes(restaurantId);
+          
+          return (
+            <div
+              key={restaurantId}
+              className="restaurant-card-wrapper"
+            >
+              <RestaurantCard
+                profilePicture={restaurant.profile_picture || restaurant.profile_image}
+                name={restaurant.name}
+                cuisine={restaurant.cuisine}
+                onClick={() => this.redirectToRestaurant(restaurantId)}
+              />
+              <div 
+                className="favorite-icon" 
+                onClick={(e) => this.toggleFavorite(restaurantId, e)}
+              >
+                {isFavorite ? <HeartFilled style={{ color: "red" }} /> : <HeartOutlined />}
+              </div>
+            </div>
+          );
+        })}
+      </div>
+    );
+  };
 
   render() {
     const { redirectToRestaurant, selectedRestaurantId } = this.state;
@@ -191,28 +238,37 @@ class CustomerHome extends Component {
     return (
       <div className="customer-home-container">
         <Navbar />
-
         {this.renderCarousel()}
-        {/* {this.renderCategoryImages()} */}
-        <div className="container-fluid main-content">
-          <div className="row">
-            <div className="col-md-3 filters">
-              <div className="filter-section">
+        
+        <div className="main-content">
+          <div className="filter-section">
+            <div className="filter-content">
+              <div className="delivery-type-filter">
                 <h4>Delivery Type</h4>
                 <Radio.Group
                   onChange={this.handleDeliveryTypeChange}
                   value={this.state.deliveryType}
                 >
-                  <Space direction="vertical">
+                  <Space>
                     <Radio value="">All</Radio>
                     <Radio value="Delivery">Delivery</Radio>
                     <Radio value="Pickup">Pickup</Radio>
                   </Space>
                 </Radio.Group>
               </div>
+              
+              <div className="search-bar">
+                <Input
+                  placeholder="Search restaurants or cuisines..."
+                  prefix={<SearchOutlined />}
+                  onChange={this.handleSearchChange}
+                  className="search-input"
+                />
+              </div>
             </div>
-            <div className="col-md-9">{this.renderRestaurants()}</div>
           </div>
+
+          {this.renderRestaurants()}
         </div>
         <CustomerFooter />
       </div>

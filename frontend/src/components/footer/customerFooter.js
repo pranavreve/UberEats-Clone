@@ -1,133 +1,110 @@
-// import React, { Component } from "react";
-// import ubereatslogo from "../../Images/UberEatsWhite.png";
-// import "./customerFooter.css";
-
-// class CustomerFooter extends Component {
-//   render() {
-//     return (
-//       <div className="footer">
-//         <div className="container" style={{ marginTop: "35px" }}>
-//           <div className="row">
-//             <div className="col-md-3">
-//               <img className="uberlogo" src={ubereatslogo} alt="Uber Eats Logo" />
-//             </div>
-//           </div>
-//           <div className="row">
-//             <div className="col-md-3">
-//               <ul className="footer-links">
-//                 <li>Get Help</li>
-//                 <li>Buy gift cards</li>
-//                 <li>Add your restaurant</li>
-//                 <li>Sign up to deliver</li>
-//                 <li>Create a business account</li>
-//               </ul>
-//             </div>
-//             <div className="col-md-3">
-//               <ul className="footer-links">
-//                 <li>Restaurants near me</li>
-//                 <li>View all cities</li>
-//                 <li>View all countries</li>
-//                 <li>Pickup near me</li>
-//                 <li>About Uber Eats</li>
-//                 <li>Shop groceries</li>
-//               </ul>
-//             </div>
-//           </div>
-//           <div className="row">
-//             <div className="col-md-3">
-//               <a
-//                 href="https://apps.apple.com/us/app/uber-eats-food-delivery/id1058959277"
-//                 target="_blank"
-//                 rel="noopener noreferrer"
-//               >
-//                 <img
-//                   src="https://d1a3f4spazzrp4.cloudfront.net/uber-com/1.3.8/d1a3f4spazzrp4.cloudfront.net/illustrations/app-store-apple-f1f919205b.svg"
-//                   alt="Download on App Store"
-//                   className="store-img"
-//                 />
-//               </a>
-//             </div>
-//             <div className="col-md-3">
-//               <a
-//                 href="https://play.google.com/store/apps/details?id=com.ubercab.eats&hl"
-//                 target="_blank"
-//                 rel="noopener noreferrer"
-//               >
-//                 <img
-//                   src="https://d1a3f4spazzrp4.cloudfront.net/uber-com/1.3.8/d1a3f4spazzrp4.cloudfront.net/illustrations/app-store-google-4d63c31a3e.svg"
-//                   alt="Get it on Google Play"
-//                   className="store-img"
-//                 />
-//               </a>
-//             </div>
-//           </div>
-//         </div>
-//       </div>
-//     );
-//   }
-// }
-// export default CustomerFooter;
-
 import React, { Component } from "react";
-import ubereatslogo from "../../Images/UberEatsWhite.png";
+import { Link } from "react-router-dom";
+import {
+  FacebookOutlined,
+  TwitterOutlined,
+  InstagramOutlined,
+} from "@ant-design/icons";
 import "./customerFooter.css";
 
 class CustomerFooter extends Component {
   render() {
     return (
-      <div className="footer">
-        <div className="container" style={{ marginTop: "35px" }}>
-          <div className="row">
-            <div className="col-md-3 d-flex flex-column align-items-start">
-              <img className="uberlogo" src={ubereatslogo} alt="Uber Eats Logo" />
-              <div className="store-links mt-3">
+      <footer className="footer">
+        <div className="footer-content">
+          <div className="footer-main">
+            <div className="footer-section">
+              <div className="footer-logo">
+                <Link to="/" className="logo-text">
+                  <span className="uber">Uber</span>
+                  <span className="eats">Eats</span>
+                </Link>
+              </div>
+              <div className="app-stores">
                 <a
                   href="https://apps.apple.com/us/app/uber-eats-food-delivery/id1058959277"
                   target="_blank"
                   rel="noopener noreferrer"
+                  className="store-button"
                 >
                   <img
-                    src="https://d1a3f4spazzrp4.cloudfront.net/uber-com/1.3.8/d1a3f4spazzrp4.cloudfront.net/illustrations/app-store-apple-f1f919205b.svg"
+                    src="https://d3i4yxtzktqr9n.cloudfront.net/web-eats-v2/783bb4a82e5be29e.svg"
                     alt="Download on App Store"
-                    className="store-img"
                   />
                 </a>
                 <a
-                  href="https://play.google.com/store/apps/details?id=com.ubercab.eats&hl"
+                  href="https://play.google.com/store/apps/details?id=com.ubercab.eats"
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="mt-2"
+                  className="store-button"
                 >
                   <img
-                    src="https://d1a3f4spazzrp4.cloudfront.net/uber-com/1.3.8/d1a3f4spazzrp4.cloudfront.net/illustrations/app-store-google-4d63c31a3e.svg"
+                    src="https://d3i4yxtzktqr9n.cloudfront.net/web-eats-v2/163bdc9b0f1e7c9e.png"
                     alt="Get it on Google Play"
-                    className="store-img"
                   />
                 </a>
               </div>
             </div>
-            <div className="col-md-3">
-              <ul className="footer-links">
-                <li>Get Help</li>
-                <li>Buy gift cards</li>
-                <li>Add your restaurant</li>
-                <li>Sign up to deliver</li>
-                <li>Create a business account</li>
-              </ul>
+
+            <div className="footer-links-section">
+              <div className="footer-column">
+                <h3>Get Help</h3>
+                <ul>
+                  <li><a href="#">Add your restaurant</a></li>
+                  <li><a href="#">Sign up to deliver</a></li>
+                  <li><a href="#">Create a business account</a></li>
+                  <li><a href="#">Promotions</a></li>
+                </ul>
+              </div>
+
+              <div className="footer-column">
+                <h3>Restaurants</h3>
+                <ul>
+                  <li><a href="#">Restaurants near me</a></li>
+                  <li><a href="#">View all cities</a></li>
+                  <li><a href="#">View all countries</a></li>
+                  <li><a href="#">Pickup near me</a></li>
+                </ul>
+              </div>
+
+              <div className="footer-column">
+                <h3>Uber Eats</h3>
+                <ul>
+                  <li><a href="#">About Uber Eats</a></li>
+                  <li><a href="#">Privacy Policy</a></li>
+                  <li><a href="#">Terms</a></li>
+                  <li><a href="#">Pricing</a></li>
+                  <li><a href="#">Do not sell my info</a></li>
+                </ul>
+              </div>
             </div>
-            <div className="col-md-3">
-              <ul className="footer-links">
-                <li>Restaurants near me</li>
-                <li>View all cities</li>
-                <li>View all countries</li>
-                <li>Pickup near me</li>
-                <li>About Uber Eats</li>
-                <li>Shop groceries</li>
-              </ul>
+          </div>
+
+          <div className="footer-bottom">
+            <div className="social-links">
+              <a href="https://facebook.com/ubereats" target="_blank" rel="noopener noreferrer">
+                <FacebookOutlined />
+              </a>
+              <a href="https://twitter.com/ubereats" target="_blank" rel="noopener noreferrer">
+                <TwitterOutlined />
+              </a>
+              <a href="https://instagram.com/ubereats" target="_blank" rel="noopener noreferrer">
+                <InstagramOutlined />
+              </a>
+            </div>
+            <div className="footer-info">
+              <div className="copyright">
+                © {new Date().getFullYear()} Uber Technologies Inc.
+              </div>
+              <div className="legal-links">
+                <a href="#">Privacy Policy</a>
+                <a href="#">Terms of Service</a>
+                <a href="#">Pricing</a>
+              </div>
             </div>
           </div>
         </div>
-      </div>
+      </footer>
     );
   }
 }

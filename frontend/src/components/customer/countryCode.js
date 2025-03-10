@@ -1,0 +1,22 @@
+export const countries = [
+  { code: 'US', name: 'United States', phone: '+1' },
+  { code: 'CA', name: 'Canada', phone: '+1' },
+  { code: 'GB', name: 'United Kingdom', phone: '+44' },
+  { code: 'IN', name: 'India', phone: '+91' },
+  { code: 'AU', name: 'Australia', phone: '+61' },
+  { code: 'DE', name: 'Germany', phone: '+49' },
+  { code: 'FR', name: 'France', phone: '+33' },
+  { code: 'IT', name: 'Italy', phone: '+39' },
+  { code: 'ES', name: 'Spain', phone: '+34' },
+  { code: 'BR', name: 'Brazil', phone: '+55' },
+  { code: 'MX', name: 'Mexico', phone: '+52' },
+  { code: 'JP', name: 'Japan', phone: '+81' },
+  { code: 'KR', name: 'South Korea', phone: '+82' },
+  { code: 'CN', name: 'China', phone: '+86' },
+  { code: 'RU', name: 'Russia', phone: '+7' },
+  { code: 'ZA', name: 'South Africa', phone: '+27' },
+  { code: 'SG', name: 'Singapore', phone: '+65' },
+  { code: 'NZ', name: 'New Zealand', phone: '+64' },
+  { code: 'AE', name: 'United Arab Emirates', phone: '+971' },
+  { code: 'SA', name: 'Saudi Arabia', phone: '+966' }
+]; 

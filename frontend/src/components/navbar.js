@@ -1,123 +1,6 @@
-// import React, { Component } from "react";
-// import { Link } from "react-router-dom";
-// import { FaShoppingCart } from "react-icons/fa"; // Importing cart icon
-// import "./navbar.css";
-
-// class NavBar extends Component {
-//   constructor(props) {
-//     super(props);
-//     this.state = {
-//       isAuthenticated: false,
-//       userType: "", // 'customer' or 'restaurant'
-//     };
-//   }
-
-//   componentDidMount() {
-//     // Check if the user is logged in by verifying the token in session storage
-//     const token = sessionStorage.getItem("authToken"); // Updated key
-//     const userType = sessionStorage.getItem("userType");
-//     console.log("token", token, "userType", userType);
-//     if (token && userType) {
-//       this.setState({ isAuthenticated: true, userType });
-//     }
-//   }
-
-//   handleLogout = () => {
-//     sessionStorage.clear();
-//     this.setState({ isAuthenticated: false, userType: "" });
-//   };
-
-//   handleCartIconClick = () => {
-//     if (this.props.onCartIconClick) {
-//       this.props.onCartIconClick();
-//     }
-//   };
-
-//   render() {
-//     const { isAuthenticated, userType } = this.state;
-//     const { cartItemCount } = this.props; // Receiving the cart item count via props
-//     return (
-//       <nav className="navbar">
-//         <div className="navbar-container">
-//           <ul className="nav-menu">
-//             {isAuthenticated ? (
-//               <>
-//                 {userType === "customer" && (
-//                   <>
-//                     <li className="nav-item">
-//                       <Link to="/customer/home" className="nav-links">
-//                         Home
-//                       </Link>
-//                     </li>
-//                     <li className="nav-item">
-//                       <Link to="/customer/orders" className="nav-links">
-//                         Orders
-//                       </Link>
-//                     </li>
-//                     <li className="nav-item">
-//                       <Link to="/customer/account" className="nav-links">
-//                         Account
-//                       </Link>
-//                     </li>
-//                     <li className="nav-item cart-icon">
-//                       <Link to="/customer/cart" className="nav-links" onClick={this.handleCartIconClick}>
-//                         <FaShoppingCart />
-//                         {cartItemCount > 0 && <span className="cart-count">{cartItemCount}</span>}
-//                       </Link>
-//                     </li>
-//                   </>
-//                 )}
-//                 {userType === "restaurant" && (
-//                   <>
-//                     <li className="nav-item">
-//                       <Link to="/restaurant/home" className="nav-links">
-//                         Home
-//                       </Link>
-//                     </li>
-//                     <li className="nav-item">
-//                       <Link to="/restaurant/orders" className="nav-links">
-//                         Orders
-//                       </Link>
-//                     </li>
-//                     <li className="nav-item">
-//                       <Link to="/restaurant/account" className="nav-links">
-//                         Account
-//                       </Link>
-//                     </li>
-//                   </>
-//                 )}
-//                 <li className="nav-item">
-//                   <button className="nav-links logout-button" onClick={this.handleLogout}>
-//                     Logout
-//                   </button>
-//                 </li>
-//               </>
-//             ) : (
-//               <>
-//                 <li className="nav-item">
-//                   <Link to="/customer/login" className="nav-links">
-//                     Customer Login
-//                   </Link>
-//                 </li>
-//                 <li className="nav-item">
-//                   <Link to="/restaurant/login" className="nav-links">
-//                     Restaurant Login
-//                   </Link>
-//                 </li>
-//               </>
-//             )}
-//           </ul>
-//         </div>
-//       </nav>
-//     );
-//   }
-// }
-
-// export default NavBar;
-
 import React, { Component } from "react";
 import { Link } from "react-router-dom";
-import { FaShoppingCart } from "react-icons/fa";
+import { ShoppingCartOutlined, HomeOutlined, FileOutlined, UserOutlined, LogoutOutlined, HeartOutlined } from '@ant-design/icons';
 import "./navbar.css";
 
 class NavBar extends Component {
@@ -125,12 +8,12 @@ class NavBar extends Component {
     super(props);
     this.state = {
       isAuthenticated: false,
-      userType: "", // 'customer' or 'restaurant'
+      userType: "",
+      activeLink: window.location.pathname
     };
   }
 
   componentDidMount() {
-    // Check if the user is logged in by verifying the token in session storage
     const token = sessionStorage.getItem("authToken");
     const userType = sessionStorage.getItem("userType");
     if (token && userType) {
@@ -150,56 +33,115 @@ class NavBar extends Component {
     }
   };
 
-  // Function to render customer-specific links
+  isLinkActive = (path) => {
+    return this.state.activeLink === path;
+  };
+
   renderCustomerLinks() {
     const { cartItemCount } = this.props;
     return (
       <>
-        <li className="nav-item">
-          <Link to="/customer/home" className="nav-links">
-            Home
-          </Link>
-        </li>
-        <li className="nav-item">
-          <Link to="/customer/orders" className="nav-links">
-            Orders
-          </Link>
-        </li>
-        <li className="nav-item">
-          <Link to="/customer/account" className="nav-links">
-            Account
-          </Link>
-        </li>
-        <li className="nav-item cart-icon">
-          <Link to="/customer/cart" className="nav-links" onClick={this.handleCartIconClick}>
-            Cart
-            {cartItemCount > 0 && <span className="cart-count">{cartItemCount}</span>}
-          </Link>
-        </li>
+        <div className="nav-links-main">
+          <li className="nav-item">
+            <Link 
+              to="/customer/home" 
+              className={`nav-links ${this.isLinkActive('/customer/home') ? 'active' : ''}`}
+            >
+              <HomeOutlined style={{ marginRight: '6px' }} />
+              Home
+            </Link>
+          </li>
+          <li className="nav-item">
+            <Link 
+              to="/customer/favorites" 
+              className={`nav-links ${this.isLinkActive('/customer/favorites') ? 'active' : ''}`}
+            >
+              <HeartOutlined style={{ marginRight: '6px' }} />
+              Favorites
+            </Link>
+          </li>
+          <li className="nav-item">
+            <Link 
+              to="/customer/orders" 
+              className={`nav-links ${this.isLinkActive('/customer/orders') ? 'active' : ''}`}
+            >
+              <FileOutlined style={{ marginRight: '6px' }} />
+              Orders
+            </Link>
+          </li>
+          <li className="nav-item">
+            <Link 
+              to="/customer/profile" 
+              className={`nav-links ${this.isLinkActive('/customer/profile') ? 'active' : ''}`}
+            >
+              <UserOutlined style={{ marginRight: '6px' }} />
+              Profile
+            </Link>
+          </li>
+        </div>
+        <div className="right-items">
+          <li className="nav-item cart-icon">
+            <Link 
+              to="/customer/cart" 
+              className={`nav-links ${this.isLinkActive('/customer/cart') ? 'active' : ''}`}
+              onClick={this.handleCartIconClick}
+            >
+              <ShoppingCartOutlined style={{ fontSize: '18px' }} />
+              Cart
+              {cartItemCount > 0 && <span className="cart-count">{cartItemCount}</span>}
+            </Link>
+          </li>
+          <li className="nav-item">
+            <button className="logout-button" onClick={this.handleLogout}>
+              <LogoutOutlined />
+              Sign out
+            </button>
+          </li>
+        </div>
       </>
     );
   }
 
-  // Function to render restaurant-specific links
   renderRestaurantLinks() {
-    console.log("navbar restaurant", this.state)
     return (
       <>
-        <li className="nav-item">
-          <Link to="/restaurant/home" className="nav-links">
-            Home
-          </Link>
-        </li>
-        <li className="nav-item">
-          <Link to="/restaurant/orders" className="nav-links">
-            Orders
-          </Link>
-        </li>
-        <li className="nav-item">
-          <Link to="/restaurant/account" className="nav-links">
-            Account
-          </Link>
-        </li>
+        <div className="nav-links-main">
+          <li className="nav-item">
+            <Link 
+              to="/restaurant/home" 
+              className={`nav-links ${this.isLinkActive('/restaurant/home') ? 'active' : ''}`}
+            >
+              <HomeOutlined style={{ marginRight: '6px' }} />
+              Home
+            </Link>
+          </li>
+          <li className="nav-item">
+            <Link 
+              to="/restaurant/orders" 
+              className={`nav-links ${this.isLinkActive('/restaurant/orders') ? 'active' : ''}`}
+            >
+              <FileOutlined style={{ marginRight: '6px' }} />
+              Orders
+            </Link>
+          </li>
+          <li className="nav-item">
+            <Link 
+              to="/restaurant/profile" 
+              className={`nav-links ${this.isLinkActive('/restaurant/profile') ? 'active' : ''}`}
+            >
+              <UserOutlined style={{ marginRight: '6px' }} />
+              Profile
+            </Link>
+          </li>
+        </div>
+        <div className="right-items">
+          <li className="nav-item">
+            <button className="logout-button" onClick={this.handleLogout}>
+              <LogoutOutlined />
+              Sign out
+            </button>
+          </li>
+        </div>
       </>
     );
   }
@@ -210,30 +152,28 @@ class NavBar extends Component {
     return (
       <nav className="navbar">
         <div className="navbar-container">
+          <div className="navbar-logo">
+            <Link to="/" className="logo-text">
+              <span className="uber">Uber</span>
+              <span className="eats">Eats</span>
+            </Link>
+          </div>
+          
           <ul className="nav-menu">
             {isAuthenticated ? (
               <>
                 {userType === "customer" && this.renderCustomerLinks()}
                 {userType === "restaurant" && this.renderRestaurantLinks()}
-                <li className="nav-item">
-                  <button className="nav-links logout-button" onClick={this.handleLogout}>
-                    Logout
-                  </button>
-                </li>
               </>
             ) : (
-              <>
-                <li className="nav-item">
-                  <Link to="/customer/login" className="nav-links">
-                    Customer Login
-                  </Link>
-                </li>
-                <li className="nav-item">
-                  <Link to="/restaurant/login" className="nav-links">
-                    Restaurant Login
-                  </Link>
-                </li>
-              </>
+              <div className="auth-links">
+                <Link to="/customer/login" className="nav-links">
+                  Sign in
+                </Link>
+                <Link to="/restaurant/login" className="nav-links">
+                  Restaurant login
+                </Link>
+              </div>
             )}
           </ul>
         </div>

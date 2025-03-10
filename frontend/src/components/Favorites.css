@@ -1,0 +1,86 @@
+.favorites-container {
+  max-width: 1200px;
+  margin: 32px auto;
+  padding: 0 24px;
+}
+
+.favorites-container h1 {
+  margin-bottom: 24px;
+  font-size: 28px;
+  font-weight: 600;
+  color: #1a1a1a;
+}
+
+.favorites-loading {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 400px;
+  font-size: 16px;
+  color: #666;
+}
+
+.favorites-empty {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 400px;
+  background-color: #fff;
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+}
+
+.ant-card {
+  border-radius: 8px;
+  overflow: hidden;
+  transition: transform 0.2s ease;
+}
+
+.ant-card:hover {
+  transform: translateY(-4px);
+}
+
+.ant-card-cover img {
+  height: 200px;
+  object-fit: cover;
+}
+
+.restaurant-details {
+  margin-top: 12px;
+  font-size: 14px;
+  color: #666;
+}
+
+.restaurant-details p {
+  margin: 4px 0;
+}
+
+.favorite-icon {
+  font-size: 20px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.favorite-icon.active {
+  color: #ff4d4f;
+}
+
+.favorite-icon:hover {
+  transform: scale(1.1);
+}
+
+@media (max-width: 768px) {
+  .favorites-container {
+    padding: 0 16px;
+    margin: 24px auto;
+  }
+
+  .favorites-container h1 {
+    font-size: 24px;
+    margin-bottom: 16px;
+  }
+
+  .ant-card-cover img {
+    height: 160px;
+  }
+} 

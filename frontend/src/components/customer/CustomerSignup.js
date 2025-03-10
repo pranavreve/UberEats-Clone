@@ -1,8 +1,9 @@
 import React, { Component } from "react";
 import "./CustomerSignup.css";
-import axios from "axios";
 import ubereatslogo from "../../Images/UberEatsLogo.png";
 import { Navigate } from "react-router-dom";
+import { authAPI } from "../../services/api";
+import axios from "axios";
 
 class CustomerSignup extends Component {
   state = {
@@ -12,6 +13,7 @@ class CustomerSignup extends Component {
     password: "",
     phone_number: "",
     signupError: "",
+    signupSuccess: "",
     redirectToHome: false,
   };
 
@@ -23,83 +25,127 @@ class CustomerSignup extends Component {
     });
   };
 
-  handleSignup = () => {
-    const { first_name, last_name, email, password, phone_number } = this.state;
+  validatePhoneNumber = (phone) => {
+    // Simple validation - phone should be at least 10 digits
+    const phoneRegex = /^\d{10,15}$/;
+    return phoneRegex.test(phone.replace(/[^0-9]/g, ''));
+  };
 
+  handleSignup = async () => {
+    const { first_name, last_name, email, password, phone_number } = this.state;
+    
+    // Reset messages
+    this.setState({ signupError: "", signupSuccess: "" });
+
+    // Validate all fields
     if (!first_name || !last_name || !email || !password || !phone_number) {
       this.setState({ signupError: "Please fill in all required fields." });
       return;
     }
-    const baseURL = process.env.REACT_APP_UBEREATS_BACKEND_URL.replace(/\/$/, '');
 
-    // Path does not start with a slash
-    const path = 'customer/signup/';
+    // Validate email format
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(email)) {
+      this.setState({ signupError: "Please enter a valid email address." });
+      return;
+    }
 
-    // Construct the full URL
-    const fullURL = `${baseURL}/${path}`;
+    // Validate password length
+    if (password.length < 6) {
+      this.setState({ signupError: "Password must be at least 6 characters long." });
+      return;
+    }
 
-    // Log the full URL to verify
-    console.log('Signup URL:', fullURL);
+    // Validate phone number
+    if (!this.validatePhoneNumber(phone_number)) {
+      this.setState({ signupError: "Please enter a valid phone number (at least 10 digits)." });
+      return;
+    }
 
-    axios
-      .post(
-        `${process.env.REACT_APP_UBEREATS_BACKEND_URL}/customer/signup/`,
-        {
-          first_name,
-          last_name,
-          email,
-          password,
-          phone_number,
-        }
-      )
-      .then((response) => {
-        if (response.status === 201) {
-          // Automatically log in the customer
-          axios
-            .post(
-              `${process.env.REACT_APP_UBEREATS_BACKEND_URL}/customer/login/`,
-              { email, password }
-            )
-            .then((loginResponse) => {
-              sessionStorage.setItem("authToken", loginResponse.data.token);
-              sessionStorage.setItem("userType", "customer");
-              // Fetch customer details
-              axios
-                .get(
-                  `${process.env.REACT_APP_UBEREATS_BACKEND_URL}/customer/profile/`,
-                  {
-                    headers: {
-                      Authorization: `Bearer ${loginResponse.data.token}`,
-                    },
-                  }
-                )
-                .then((profileResponse) => {
-                  sessionStorage.setItem(
-                    "customerDetails",
-                    JSON.stringify(profileResponse.data)
-                  );
-                  this.setState({ redirectToHome: true });
-                })
-                .catch((error) => {
-                  this.setState({
-                    signupError: "Failed to fetch customer details.",
-                  });
-                });
-            })
-            .catch((error) => {
-              this.setState({ signupError: "Failed to log in after signup." });
+    try {
+      // First, create the user account
+      const signupData = {
+        name: `${first_name} ${last_name}`,
+        email,
+        password,
+        phone: phone_number,
+        user_type: 'customer' // Explicitly specify user type
+      };
+
+      // Sign up
+      const signupResponse = await axios.post(
+        `${process.env.REACT_APP_UBEREATS_BACKEND_URL}/api/auth/register`,
+        signupData
+      );
+
+      if (signupResponse.status === 201 || signupResponse.status === 200) {
+        // Login immediately after successful signup
+        const loginResponse = await axios.post(
+          `${process.env.REACT_APP_UBEREATS_BACKEND_URL}/api/auth/login`,
+          {
+            email,
+            password
+          }
+        );
+
+        if (loginResponse.data.token) {
+          const token = loginResponse.data.token;
+          
+          // Store auth token and user type
+          sessionStorage.setItem("authToken", token);
+          sessionStorage.setItem("userType", "customer");
+
+          // Fetch customer profile with the token
+          const profileResponse = await axios.get(
+            `${process.env.REACT_APP_UBEREATS_BACKEND_URL}/api/customers/profile`,
+            {
+              headers: {
+                Authorization: `Bearer ${token}`
+              }
+            }
+          );
+
+          if (profileResponse.data.success) {
+            // Store profile data
+            sessionStorage.setItem("customerDetails", JSON.stringify(profileResponse.data.profile));
+            
+            // Show success message briefly before redirect
+            this.setState({ 
+              signupSuccess: "Registration successful! Redirecting...",
+              signupError: ""
             });
+
+            // Redirect after a short delay
+            setTimeout(() => {
+              this.setState({ redirectToHome: true });
+            }, 1500);
+          } else {
+            throw new Error("Failed to fetch profile");
+          }
+        } else {
+          throw new Error("Login failed after signup");
         }
-      })
-      .catch((error) => {
-        const errorMsg =
-          error.response?.data?.error || "Error occurred during signup.";
-        this.setState({ signupError: errorMsg });
+      }
+    } catch (error) {
+      console.error('Signup error:', error);
+      let errorMsg = "Error occurred during signup.";
+      
+      if (error.response) {
+        errorMsg = error.response.data.message || 
+                  error.response.data.error || 
+                  error.response.data.errors?.[0]?.msg ||
+                  "Registration failed. Please try again.";
+      }
+      
+      this.setState({ 
+        signupError: errorMsg,
+        signupSuccess: ""
       });
+    }
   };
 
   render() {
-    const { redirectToHome } = this.state;
+    const { redirectToHome, signupSuccess, signupError } = this.state;
 
     if (redirectToHome) {
       return <Navigate to="/customer/home" />;
@@ -145,8 +191,11 @@ class CustomerSignup extends Component {
             className="textinput"
             onChange={this.handleInputChange}
           />
-          {this.state.signupError && (
-            <div className="error-message">{this.state.signupError}</div>
+          {signupSuccess && (
+            <div className="success-message">{signupSuccess}</div>
+          )}
+          {signupError && (
+            <div className="error-message">{signupError}</div>
           )}
           <button className="button" onClick={this.handleSignup}>
             Sign Up

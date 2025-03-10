@@ -1,123 +1,407 @@
-/* customerOrders.css */
-
+/* Customer Orders Page Styling */
 .customer-orders-container {
-  padding: 2%;
+  font-family: UberMoveText, system-ui, "Helvetica Neue", Helvetica, sans-serif;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  background-color: #ffffff;
 }
 
+.orders-content {
+  flex: 1;
+  max-width: 1024px;
+  margin: 0 auto;
+  padding: 40px 24px;
+  width: 100%;
+}
+
+/* Orders Header */
 .orders-header {
   display: flex;
   justify-content: space-between;
-  align-items: center;
-  margin-bottom: 20px;
+  align-items: flex-start;
+  margin-bottom: 32px;
+  flex-wrap: wrap;
+  gap: 20px;
 }
 
-.orders-header h3 {
+.orders-header h1 {
+  font-size: 36px;
+  font-weight: 700;
+  color: #000000;
   margin: 0;
+  line-height: 1.2;
 }
 
-.status-select {
-  height: 36px;
+.align-center {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+/* Tabs Styling */
+.orders-tabs {
+  display: flex;
+  margin-bottom: 24px;
+  border-bottom: 2px solid #E2E2E2;
+  position: sticky;
+  top: 72px;
+  background: white;
+  z-index: 10;
+  padding: 0 4px;
+}
+
+.tab-btn {
+  padding: 16px 24px;
+  background: none;
+  border: none;
   font-size: 16px;
-  padding: 5px 10px;
+  font-weight: 500;
+  color: #545454;
+  cursor: pointer;
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  transition: all 0.2s ease;
 }
 
+.tab-btn.active {
+  color: #000000;
+  font-weight: 600;
+}
+
+.tab-btn.active::after {
+  content: '';
+  position: absolute;
+  bottom: -2px;
+  left: 0;
+  width: 100%;
+  height: 2px;
+  background-color: #000000;
+}
+
+.tab-icon {
+  font-size: 16px;
+}
+
+/* Orders List */
 .orders-list {
-  border-top: 1px solid #ddd;
+  display: grid;
+  gap: 16px;
+  margin-bottom: 32px;
 }
 
 .order-item {
-  padding: 15px 0;
-  border-bottom: 1px solid #ddd;
+  background-color: white;
+  border: 1px solid #E2E2E2;
+  border-radius: 16px;
+  padding: 24px;
   cursor: pointer;
+  transition: all 0.2s ease;
 }
 
 .order-item:hover {
-  background-color: #f9f9f9;
+  border-color: #000000;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
 }
 
 .order-header {
   display: flex;
   justify-content: space-between;
-  margin-bottom: 5px;
+  align-items: flex-start;
+  margin-bottom: 16px;
+  gap: 16px;
 }
 
 .restaurant-name {
-  font-size: 18px;
+  font-size: 20px;
   font-weight: 600;
+  color: #000000;
+  line-height: 1.4;
 }
 
 .order-status {
   font-size: 14px;
-  color: #888;
+  font-weight: 500;
+  padding: 6px 12px;
+  border-radius: 500px;
+  white-space: nowrap;
+}
+
+/* Status Colors */
+.status-new, .status-order-received {
+  background-color: #E6F2FF;
+  color: #0066FF;
+}
+
+.status-preparing {
+  background-color: #FFF4E5;
+  color: #FF8C00;
+}
+
+.status-on-the-way {
+  background-color: #E8F5E9;
+  color: #06C167;
+}
+
+.status-pick-up-ready {
+  background-color: #E8F5E9;
+  color: #06C167;
+}
+
+.status-delivered, .status-picked-up {
+  background-color: #EEEEEE;
+  color: #545454;
+}
+
+.status-cancelled, .status-rejected {
+  background-color: #FFEBEE;
+  color: #D32F2F;
 }
 
 .order-details {
-  font-size: 14px;
-  color: #555;
+  color: #545454;
+  font-size: 15px;
+  line-height: 1.5;
 }
 
+/* Modal Styling */
 .order-modal-box {
   position: absolute;
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
-  background: white;
-  width: 500px;
-  max-width: 90%;
-  border-radius: 8px;
-  box-shadow: 0px 4px 15px rgba(0, 0, 0, 0.2);
-  overflow: hidden;
+  width: 95%;
+  max-width: 550px;
+  background-color: white;
+  border-radius: 16px;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15);
+  outline: none;
+  max-height: 90vh;
+  overflow-y: auto;
 }
 
 .modal-header {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 15px;
-  background: #f5f5f5;
-  border-bottom: 1px solid #ddd;
+  padding: 24px;
+  border-bottom: 1px solid #E2E2E2;
+  position: sticky;
+  top: 0;
+  background-color: white;
+  z-index: 1;
 }
 
 .modal-header h2 {
+  font-size: 24px;
+  font-weight: 700;
   margin: 0;
+  color: #000000;
 }
 
 .close-button {
   background: none;
   border: none;
   font-size: 24px;
+  color: #545454;
   cursor: pointer;
+  padding: 8px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background-color 0.2s ease;
+}
+
+.close-button:hover {
+  background-color: #F6F6F6;
 }
 
 .modal-content {
-  padding: 15px;
+  padding: 24px;
+}
+
+.order-info {
+  background-color: #F8F8F8;
+  padding: 20px;
+  border-radius: 12px;
+  margin-bottom: 24px;
+}
+
+.order-info p {
+  margin: 12px 0;
+  color: #000000;
+  font-size: 15px;
+  line-height: 1.5;
 }
 
 .modal-item {
   display: flex;
   justify-content: space-between;
-  margin-bottom: 10px;
+  align-items: center;
+  padding: 16px 0;
+  border-bottom: 1px solid #E2E2E2;
 }
 
 .item-name {
-  flex: 2;
+  font-weight: 500;
+  color: #000000;
+  flex: 1;
+  font-size: 15px;
 }
 
 .item-quantity {
-  flex: 1;
-  text-align: center;
+  color: #545454;
+  margin: 0 16px;
+  font-size: 15px;
 }
 
 .item-price {
-  flex: 1;
-  text-align: right;
+  font-weight: 600;
+  color: #000000;
+  font-size: 15px;
 }
 
 .modal-total {
   display: flex;
   justify-content: space-between;
-  font-weight: bold;
-  margin-top: 15px;
-  border-top: 1px solid #ddd;
-  padding-top: 10px;
+  font-weight: 700;
+  font-size: 20px;
+  margin-top: 24px;
+  padding-top: 20px;
+  border-top: 2px solid #E2E2E2;
+  color: #000000;
+}
+
+/* Buttons */
+.refresh-button {
+  background-color: #000000;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  padding: 12px 24px;
+  font-size: 16px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+  min-width: 140px;
+}
+
+.refresh-button:hover {
+  background-color: #333333;
+}
+
+.refresh-button-small {
+  background-color: #FFFFFF;
+  color: #000000;
+  border: 1px solid #E2E2E2;
+  border-radius: 8px;
+  padding: 8px 16px;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.refresh-button-small:hover {
+  background-color: #F6F6F6;
+  border-color: #000000;
+}
+
+.cancel-order-btn {
+  background-color: #000000;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  padding: 16px;
+  font-size: 16px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+  width: 100%;
+  margin-top: 24px;
+}
+
+.cancel-order-btn:hover {
+  background-color: #333333;
+}
+
+.cancel-order-btn:disabled {
+  background-color: #E2E2E2;
+  color: #A6A6A6;
+  cursor: not-allowed;
+}
+
+/* Empty and Loading States */
+.empty-message, .loading-message, .error-message {
+  text-align: center;
+  padding: 48px 24px;
+  background-color: white;
+  border: 1px solid #E2E2E2;
+  border-radius: 16px;
+  color: #545454;
+  font-size: 16px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 16px;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .orders-content {
+    padding: 24px 16px;
+  }
+
+  .orders-header {
+    margin-bottom: 24px;
+  }
+
+  .orders-header h1 {
+    font-size: 28px;
+  }
+
+  .tab-btn {
+    padding: 12px 16px;
+    font-size: 15px;
+  }
+
+  .order-item {
+    padding: 20px;
+  }
+
+  .restaurant-name {
+    font-size: 18px;
+  }
+
+  .modal-header h2 {
+    font-size: 20px;
+  }
+
+  .modal-content {
+    padding: 20px;
+  }
+
+  .refresh-button {
+    width: 100%;
+  }
+}
+
+/* Loading Spinner */
+.loading-spinner {
+  width: 40px;
+  height: 40px;
+  margin-bottom: 16px;
+  border: 3px solid #f3f3f3;
+  border-top: 3px solid #000000;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
 }

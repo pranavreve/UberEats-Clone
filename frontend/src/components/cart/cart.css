@@ -1,69 +1,293 @@
+.cart-page {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  background-color: #f8f9fa;
+}
+
 .cart-container {
-    display: flex;
-    justify-content: center;
-    align-items: flex-start;
-    width: 100%;
-    min-height: 70vh;  /* Adjust height to center vertically */
-    margin-top: 20px;
-  }
-  
-  .cart-table-wrapper {
-    text-align: center;
-    padding: 20px;
-    background-color: #f9f9f9;
-    border-radius: 5px;
-  }
-  
-  .cart-table {
-    width: 100%;
-    border-collapse: collapse;
-    margin: 20px 0;
-  }
-  
-  .cart-table th, .cart-table td {
-    border: 1px solid #ddd;
-    padding: 16px;  /* Increased padding for better spacing */
-    text-align: center;
-  }
-  
-  .cart-table th {
-    background-color: #f2f2f2;
-    font-weight: bold;
-  }
-  
-  .cart-heading {
-    margin-bottom: 20px;
-  }
-  
-  .btn-danger {
-    padding: 8px 15px;
-    color: white;
-    cursor: pointer;  /* Keep the pointer for the Remove button */
-  }
-  
-  .cart-table-wrapper table {
-    margin: 0 auto; /* Center the table within the wrapper */
-  }
-  
-  .cart-container {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    height: 80vh;
-  }
-  
-  .place-order-wrapper-bottom {
-    text-align: center;
-    margin-top: 20px;
-  }
-  
-  .success-banner {
-    background-color: green;
-    color: white;
-    padding: 10px;
-    text-align: center;
-    margin-bottom: 15px;
-    border-radius: 5px;
-    font-weight: bold;
-  }
-  
+  max-width: 800px;
+  margin: 2rem auto;
+  padding: 2rem;
+  background-color: #fff;
+  border-radius: 16px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+  flex: 1;
+}
+
+.cart-header {
+  text-align: center;
+  margin-bottom: 2rem;
+  padding-bottom: 1rem;
+  border-bottom: 2px solid #f0f0f0;
+}
+
+.cart-header h1 {
+  font-size: 2.5rem;
+  color: #1a1a1a;
+  margin-bottom: 0.5rem;
+  font-weight: 600;
+}
+
+.cart-header p {
+  color: #666;
+  font-size: 1.1rem;
+}
+
+.restaurant-info {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 2rem;
+  padding: 1.5rem;
+  background-color: #fff;
+  border-radius: 12px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+}
+
+.restaurant-info h2 {
+  margin: 0;
+  font-size: 1.5rem;
+  color: #1a1a1a;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.view-restaurant-btn {
+  background-color: #ffffff;
+  border: 2px solid #e2e2e2;
+  color: #1a1a1a;
+  padding: 0.75rem 1.5rem;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.2s;
+  font-weight: 500;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.view-restaurant-btn:hover {
+  background-color: #f8f9fa;
+  border-color: #1a1a1a;
+}
+
+.cart-items {
+  margin-bottom: 2rem;
+}
+
+.cart-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1.5rem;
+  margin-bottom: 1rem;
+  background-color: #fff;
+  border-radius: 12px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+  transition: transform 0.2s;
+}
+
+.cart-item:hover {
+  transform: translateY(-2px);
+}
+
+.item-details {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  gap: 15px;
+}
+
+.item-details h3 {
+  margin: 0;
+  font-size: 1.2rem;
+  color: #1a1a1a;
+}
+
+.item-price {
+  color: #1a1a1a;
+  font-weight: 600;
+  font-size: 1.1rem;
+}
+
+.item-actions {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.quantity-controls {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  background-color: #f8f9fa;
+  padding: 0.5rem;
+  border-radius: 8px;
+}
+
+.quantity-btn {
+  background-color: #ffffff;
+  border: 1px solid #e2e2e2;
+  color: #1a1a1a;
+  width: 32px;
+  height: 32px;
+  border-radius: 6px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  font-size: 1.2rem;
+  transition: all 0.2s;
+}
+
+.quantity-btn:hover {
+  background-color: #1a1a1a;
+  color: #ffffff;
+  border-color: #1a1a1a;
+}
+
+.quantity {
+  font-weight: 600;
+  font-size: 1.1rem;
+  min-width: 30px;
+  text-align: center;
+  color: #1a1a1a;
+}
+
+.remove-btn {
+  background-color: #fff0f0;
+  color: #ff4d4f;
+  border: none;
+  padding: 0.75rem 1rem;
+  border-radius: 8px;
+  cursor: pointer;
+  font-weight: 500;
+  transition: all 0.2s;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.remove-btn:hover {
+  background-color: #ffd4d4;
+}
+
+.cart-summary {
+  background-color: #ffffff;
+  padding: 2rem;
+  border-radius: 12px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+}
+
+.cart-total {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 1.5rem;
+  font-weight: 600;
+  color: #1a1a1a;
+  margin-bottom: 1.5rem;
+  padding-bottom: 1rem;
+  border-bottom: 2px solid #f0f0f0;
+}
+
+.cart-actions {
+  display: flex;
+  gap: 1rem;
+  justify-content: flex-end;
+}
+
+.clear-cart-btn {
+  background-color: #fff0f0;
+  border: none;
+  color: #ff4d4f;
+  padding: 1rem 2rem;
+  border-radius: 8px;
+  cursor: pointer;
+  font-weight: 500;
+  transition: all 0.2s;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.clear-cart-btn:hover {
+  background-color: #ffd4d4;
+}
+
+.checkout-btn {
+  background-color: #1a1a1a;
+  color: white;
+  border: none;
+  padding: 1rem 2rem;
+  border-radius: 8px;
+  cursor: pointer;
+  font-weight: 500;
+  transition: all 0.2s;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.checkout-btn:hover {
+  background-color: #000000;
+  transform: translateY(-2px);
+}
+
+.checkout-btn:disabled {
+  background-color: #e2e2e2;
+  cursor: not-allowed;
+  transform: none;
+}
+
+.empty-cart {
+  text-align: center;
+  padding: 4rem 2rem;
+  background-color: #ffffff;
+  border-radius: 12px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+}
+
+.empty-cart-icon {
+  font-size: 4rem;
+  color: #e2e2e2;
+  margin-bottom: 1.5rem;
+}
+
+.empty-cart p {
+  font-size: 1.2rem;
+  color: #666;
+  margin-bottom: 2rem;
+}
+
+.browse-btn {
+  background-color: #1a1a1a;
+  color: white;
+  border: none;
+  padding: 1rem 2rem;
+  border-radius: 8px;
+  cursor: pointer;
+  font-weight: 500;
+  transition: all 0.2s;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.browse-btn:hover {
+  background-color: #000000;
+  transform: translateY(-2px);
+}
+
+.error-message {
+  color: #ff4d4f;
+  text-align: center;
+  padding: 1rem;
+  margin-top: 1rem;
+  background-color: #fff0f0;
+  border-radius: 8px;
+  font-weight: 500;
+}
+

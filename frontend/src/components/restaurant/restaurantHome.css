@@ -218,3 +218,46 @@
   height: 150px;
   object-fit: cover;
 }
+
+.menu-section {
+  margin-top: 30px;
+  margin-bottom: 50px;
+}
+
+.menu-title {
+  font-size: 28px;
+  font-weight: bold;
+  margin-bottom: 20px;
+  color: #333;
+}
+
+.no-dishes-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 200px;
+  background-color: #f9f9f9;
+  border-radius: 8px;
+  margin-top: 20px;
+}
+
+.no-dishes-message {
+  font-size: 18px;
+  color: #666;
+  text-align: center;
+}
+
+.dish-ingredients {
+  margin-top: 10px;
+  font-size: 13px;
+  color: #666;
+}
+
+.ingredients-label {
+  font-weight: bold;
+  color: #444;
+}
+
+.category-section {
+  margin-bottom: 40px;
+}

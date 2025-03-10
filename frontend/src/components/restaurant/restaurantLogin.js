@@ -2,7 +2,7 @@ import React, { Component } from "react";
 import "./restaurantLogin.css";
 import ubereatslogo from "../../Images/UberEatsLogo.png";
 import { Navigate } from "react-router-dom";
-import axios from "axios";
+import { authAPI, restaurantAPI } from "../../services/api";
 
 class RestaurantLogin extends Component {
   state = {
@@ -18,55 +18,46 @@ class RestaurantLogin extends Component {
 
   componentDidMount() {
     // Check if the user is logged in by verifying the token in session storage
-    const token = sessionStorage.getItem("authToken"); // Updated key
+    const token = sessionStorage.getItem("authToken");
     const userType = sessionStorage.getItem("userType");
     if (token && userType) {
-      // Navigate to home page if the customer is already logged in
+      // Navigate to home page if the restaurant is already logged in
       window.location.href = "/restaurant/home";
     }
   }
 
-  handleLogin = () => {
-    axios
-      .post(
-        `${process.env.REACT_APP_UBEREATS_BACKEND_URL}/restaurant/login/`,
-        {
-          email: this.state.email,
-          password: this.state.password,
-        }
-      )
-      .then((response) => {
-        if (response.status === 200) {
-          sessionStorage.setItem("authToken", response.data.token);
-          sessionStorage.setItem("userType", "restaurant");
-          // Fetch restaurant details
-          axios
-            .get(
-              `${process.env.REACT_APP_UBEREATS_BACKEND_URL}/restaurant/profile/`,
-              {
-                headers: {
-                  Authorization: `Bearer ${response.data.token}`,
-                },
-              }
-            )
-            .then((res) => {
-              sessionStorage.setItem(
-                "restaurantDetails",
-                JSON.stringify(res.data)
-              );
-              this.setState({ redirectToHome: true });
-            })
-            .catch((error) => {
-              this.setState({ loginError: "Failed to fetch restaurant details" });
-            });
-          // this.setState({ redirectToHome: true });
-        }
-      })
-      .catch((error) => {
-        this.setState({
-          loginError: "Invalid email or password. Please try again.",
-        });
+  handleLogin = async () => {
+    try {
+      // Login using the updated API service
+      const loginResponse = await authAPI.login({
+        email: this.state.email,
+        password: this.state.password,
       });
+
+      // Store auth token
+      sessionStorage.setItem("authToken", loginResponse.data.token);
+      sessionStorage.setItem("userType", "restaurant");
+
+      try {
+        // Get restaurant profile
+        const profileResponse = await restaurantAPI.getProfile();
+        
+        // Store restaurant details
+        sessionStorage.setItem(
+          "restaurantDetails",
+          JSON.stringify(profileResponse.data)
+        );
+        
+        // Redirect to home page
+        this.setState({ redirectToHome: true });
+      } catch (profileError) {
+        this.setState({ loginError: "Failed to fetch restaurant details" });
+      }
+    } catch (error) {
+      this.setState({
+        loginError: "Invalid email or password. Please try again.",
+      });
+    }
   };
 
   render() {

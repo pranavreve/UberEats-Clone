@@ -5,6 +5,7 @@
   overflow: hidden;
   transition: transform 0.3s;
   cursor: pointer;
+  background-color: #fff;
 }
 
 .restaurant-card:hover {
@@ -13,18 +14,24 @@
 
 .card-image-container {
   width: 100%;
-  height: 120px;
+  height: 180px;
   overflow: hidden;
+  position: relative;
 }
 
 .imgSize {
   width: 100%;
   height: 100%;
   object-fit: cover;
+  transition: transform 0.3s ease;
+}
+
+.restaurant-card:hover .imgSize {
+  transform: scale(1.1);
 }
 
 .card-details {
-  padding: 10px;
+  padding: 15px;
   background-color: #ffffff;
   text-align: center;
 }
@@ -32,17 +39,32 @@
 .restaurant-name {
   font-size: 18px;
   font-weight: bold;
-  margin-top: 10px;
+  margin-bottom: 8px;
+  color: #333;
 }
 
 .delivery-fee {
   font-size: 14px;
   color: #717171;
+  margin-bottom: 8px;
+}
+
+.cuisine-type {
+  font-size: 13px;
+  color: #fff;
+  background-color: #4a90e2;
+  padding: 4px 12px;
+  border-radius: 12px;
+  display: inline-block;
   margin-top: 5px;
 }
 
 @media (max-width: 768px) {
   .restaurant-card {
     margin: 10px;
+  }
+  
+  .card-image-container {
+    height: 150px;
   }
 }
