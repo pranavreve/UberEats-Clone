@@ -1,0 +1,51 @@
+.restaurant-card {
+    padding: 0px;
+    margin-right: 60px;
+    margin-left: 20px;
+  }
+  
+  .restaurantimgSize {
+    width: 100%;
+    height: 200px;
+    object-fit: cover;
+    border-radius: 8px;
+  }
+  
+  .fav_icon_red {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    color: #e74c3c;
+    cursor: pointer;
+  }
+  
+  .restaurantName {
+    font-size: 18px;
+    font-weight: bold;
+    margin-top: 10px;
+  }
+  
+  .restaurantMeta {
+    font-size: 14px;
+    font-weight: 400;
+    color: #555;
+  }
+  
+  .tagIcon {
+    width: 14px;
+    height: 14px;
+  }
+  
+  .deliveryTime {
+    font-size: 14px;
+    color: #777;
+  }
+  
+  @media (max-width: 768px) {
+    .restaurant-card {
+      margin-left: 0;
+      margin-right: 0;
+      margin-bottom: 20px;
+    }
+  }
+  

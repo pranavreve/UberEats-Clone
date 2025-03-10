@@ -26,39 +26,58 @@
 
 .nav-menu {
   display: flex;
-  align-items: center;
   list-style: none;
-  text-align: center;
+  margin: 0;
+  padding: 0;
+  flex-grow: 1;
+  justify-content: flex-start;
+  align-items: center;
 }
 
 .nav-item {
-  height: 80px;
+  margin: 0 15px;
+  display: flex;
+  align-items: center;
+  height: 100%;
+}
+
+.logout-item {
+  margin-left: auto; /* Push logout to the right */
 }
 
 .nav-links {
-  color: #fff;
+  color: white;
   text-decoration: none;
-  padding: 0.5rem 1rem;
+  padding: 0 16px;
+  font-size: 16px;
+  display: block;
+  line-height: 2.5;
+  font-weight: 500;
 }
 
 .nav-links:hover {
-  background-color: #43a422;
-  border-radius: 4px;
-  transition: all 0.3s ease;
+  background-color: rgba(255, 255, 255, 0.1);
+  color: #fff;
 }
 
 .logout-button {
-  background: none;
+  background-color: rgba(220, 53, 69, 0.8); /* Bootstrap-like danger color */
   border: none;
-  color: #fff;
+  color: white !important; /* Force white color */
   cursor: pointer;
-  padding: 0.5rem 1rem;
+  font-size: 16px;
+  padding: 0 16px;
+  font-family: inherit;
+  line-height: 2.5;
+  height: 100%;
+  text-align: center;
+  border-radius: 4px;
+  font-weight: 500;
 }
 
 .logout-button:hover {
-  background-color: #d9534f;
-  border-radius: 4px;
-  transition: all 0.3s ease;
+  background-color: rgb(220, 53, 69); /* Darker on hover */
+  color: white !important;
 }
 
 /* Responsive Design */
@@ -81,12 +100,18 @@
 
 .cart-count {
   position: absolute;
-  top: -10px;
-  right: -10px;
-  background-color: red;
+  top: -8px;
+  right: -8px;
+  background-color: #ff4d4f;
   color: white;
   border-radius: 50%;
-  padding: 2px 6px;
+  width: 20px;
+  height: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 12px;
+  font-weight: bold;
 }
 
 .navbar {

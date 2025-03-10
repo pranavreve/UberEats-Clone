@@ -126,6 +126,7 @@ class NavBar extends Component {
     this.state = {
       isAuthenticated: false,
       userType: "", // 'customer' or 'restaurant'
+      cartCount: 0
     };
   }
 
@@ -135,6 +136,29 @@ class NavBar extends Component {
     const userType = sessionStorage.getItem("userType");
     if (token && userType) {
       this.setState({ isAuthenticated: true, userType });
+    }
+    
+    // Set up interval to check cart count
+    this.cartCheckInterval = setInterval(this.updateCartCount, 1000);
+  }
+  
+  componentWillUnmount() {
+    // Clear interval when component unmounts
+    if (this.cartCheckInterval) {
+      clearInterval(this.cartCheckInterval);
+    }
+  }
+  
+  updateCartCount = () => {
+    const cartJSON = sessionStorage.getItem('cart');
+    if (cartJSON) {
+      try {
+        const cart = JSON.parse(cartJSON);
+        const cartCount = cart.reduce((total, item) => total + item.quantity, 0);
+        this.setState({ cartCount });
+      } catch (e) {
+        console.error('Error parsing cart data', e);
+      }
     }
   }
 
@@ -152,7 +176,7 @@ class NavBar extends Component {
 
   // Function to render customer-specific links
   renderCustomerLinks() {
-    const { cartItemCount } = this.props;
+    const { cartCount } = this.state;
     return (
       <>
         <li className="nav-item">
@@ -161,19 +185,24 @@ class NavBar extends Component {
           </Link>
         </li>
         <li className="nav-item">
+          <Link to="/customer/favorites" className="nav-links">
+            Favorites
+          </Link>
+        </li>
+        <li className="nav-item">
           <Link to="/customer/orders" className="nav-links">
             Orders
           </Link>
         </li>
         <li className="nav-item">
-          <Link to="/customer/account" className="nav-links">
-            Account
+          <Link to="/customer/profile" className="nav-links">
+            Profile
           </Link>
         </li>
         <li className="nav-item cart-icon">
           <Link to="/customer/cart" className="nav-links" onClick={this.handleCartIconClick}>
             Cart
-            {cartItemCount > 0 && <span className="cart-count">{cartItemCount}</span>}
+            {cartCount > 0 && <span className="cart-count">{cartCount}</span>}
           </Link>
         </li>
       </>
@@ -182,23 +211,27 @@ class NavBar extends Component {
 
   // Function to render restaurant-specific links
   renderRestaurantLinks() {
-    console.log("navbar restaurant", this.state)
     return (
       <>
         <li className="nav-item">
-          <Link to="/restaurant/home" className="nav-links">
+          <Link to="/restaurant/home" className="nav-link">
             Home
           </Link>
         </li>
         <li className="nav-item">
-          <Link to="/restaurant/orders" className="nav-links">
+          <Link to="/restaurant/orders" className="nav-link">
             Orders
           </Link>
         </li>
         <li className="nav-item">
-          <Link to="/restaurant/account" className="nav-links">
-            Account
+          <Link to="/restaurant/profile" className="nav-link">
+            Profile
           </Link>
+        </li>
+        <li className="nav-item">
+          <button className="nav-link btn btn-link" onClick={this.handleLogout}>
+            Logout
+          </button>
         </li>
       </>
     );
@@ -215,11 +248,6 @@ class NavBar extends Component {
               <>
                 {userType === "customer" && this.renderCustomerLinks()}
                 {userType === "restaurant" && this.renderRestaurantLinks()}
-                <li className="nav-item">
-                  <button className="nav-links logout-button" onClick={this.handleLogout}>
-                    Logout
-                  </button>
-                </li>
               </>
             ) : (
               <>

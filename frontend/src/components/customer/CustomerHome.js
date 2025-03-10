@@ -30,7 +30,7 @@ class CustomerHome extends Component {
 
   fetchRestaurants = () => {
     const { deliveryType } = this.state;
-    let url = `${process.env.REACT_APP_UBEREATS_BACKEND_URL}/customer/restaurants/`;
+    let url = `${process.env.REACT_APP_UBEREATS_BACKEND_URL}/api/customers/restaurants`;
     if (deliveryType) {
       url += `?deliveryType=${deliveryType}`;
     }
@@ -43,24 +43,39 @@ class CustomerHome extends Component {
       })
       .then((response) => {
         if (response.status === 200) {
-          this.setState({ restaurants: response.data });
+          this.setState({ restaurants: response.data.restaurants || response.data });
         }
       })
       .catch((err) => {
-        console.log(err);
+        console.log("Error fetching restaurants:", err);
       });
   };
 
   fetchFavorites = () => {
     axios
-      .get(`${process.env.REACT_APP_UBEREATS_BACKEND_URL}/customer/favorites/list/`, {
+      .get(`${process.env.REACT_APP_UBEREATS_BACKEND_URL}/api/customers/favorites`, {
         headers: {
           Authorization: `Bearer ${sessionStorage.getItem("authToken")}`,
         },
       })
       .then((response) => {
         if (response.status === 200) {
-          const favoriteIds = response.data.map((favorite) => favorite.restaurant);
+          console.log("Favorites response:", response.data);
+          
+          let favoriteIds = [];
+          
+          // Handle different response formats
+          if (response.data.favorites && Array.isArray(response.data.favorites)) {
+            favoriteIds = response.data.favorites.map(favorite => 
+              favorite.restaurant_id || favorite.id || favorite.restaurant
+            );
+          } else if (Array.isArray(response.data)) {
+            favoriteIds = response.data.map(favorite => 
+              favorite.restaurant_id || favorite.id || favorite.restaurant
+            );
+          }
+          
+          console.log("Parsed favorite IDs:", favoriteIds);
           this.setState({ favorites: favoriteIds });
         }
       })
@@ -86,30 +101,50 @@ class CustomerHome extends Component {
     const { favorites } = this.state;
     const isFavorite = favorites.includes(restaurantId);
 
-    const url = `${process.env.REACT_APP_UBEREATS_BACKEND_URL}/customer/favorite/${
-      isFavorite ? "remove" : "add"
-    }/`;
+    const endpoint = isFavorite ? "remove" : "add";
+    const url = `${process.env.REACT_APP_UBEREATS_BACKEND_URL}/api/customers/favorites/${endpoint}`;
 
-    // API call to add/remove favorite on the backend
+    console.log(`Toggling favorite for restaurant ID: ${restaurantId} - Current status: ${isFavorite ? 'Favorite' : 'Not Favorite'}`);
+
+    // First update the UI for immediate feedback
+    this.setState((prevState) => ({
+      favorites: isFavorite
+        ? prevState.favorites.filter((id) => id !== restaurantId)
+        : [...prevState.favorites, restaurantId],
+    }));
+
+    // Then make the API call to update the backend
     axios
       .post(
         url,
-        { restaurant_id: restaurantId },
+        { restaurant_id: parseInt(restaurantId) },
         {
           headers: {
             Authorization: `Bearer ${sessionStorage.getItem("authToken")}`,
           },
         }
       )
-      .then(() => {
-        this.setState((prevState) => ({
-          favorites: isFavorite
-            ? prevState.favorites.filter((id) => id !== restaurantId)
-            : [...prevState.favorites, restaurantId],
-        }));
+      .then((response) => {
+        if (response.data && response.data.success) {
+          console.log(`Restaurant favorite status updated. New status: ${!isFavorite}`);
+        } else {
+          // If API call failed, revert UI change
+          console.error("Failed to update favorite status:", response.data);
+          this.setState((prevState) => ({
+            favorites: isFavorite
+              ? [...prevState.favorites, restaurantId]
+              : prevState.favorites.filter((id) => id !== restaurantId),
+          }));
+        }
       })
       .catch((error) => {
-        console.error("Error toggling favorite:", error);
+        // If API call failed, revert UI change
+        console.error("Error toggling favorite:", error.response?.data || error.message);
+        this.setState((prevState) => ({
+          favorites: isFavorite
+            ? [...prevState.favorites, restaurantId]
+            : prevState.favorites.filter((id) => id !== restaurantId),
+        }));
       });
   };
 
@@ -118,10 +153,13 @@ class CustomerHome extends Component {
     return (
       <div className="restaurant-list">
         {restaurants.map((restaurant, index) => {
-          const isFavorite = favorites.includes(restaurant.id);
+          // Handle different ID field names in the API response
+          const restaurantId = restaurant.id || restaurant.restaurant_id;
+          const isFavorite = favorites.includes(restaurantId);
+          
           return (
             <div
-              key={restaurant.id}
+              key={restaurantId}
               className={`restaurant-card-wrapper ${
                 restaurants.length % 2 !== 0 && index === restaurants.length - 1
                   ? "full-width"
@@ -129,11 +167,17 @@ class CustomerHome extends Component {
               }`}
             >
               <RestaurantCard
-                profilePicture={restaurant.profile_picture}
+                profilePicture={restaurant.profile_picture || restaurant.profile_image}
                 name={restaurant.name}
-                onClick={() => this.redirectToRestaurant(restaurant.id)}
+                onClick={() => this.redirectToRestaurant(restaurantId)}
               />
-              <div className="favorite-icon" onClick={() => this.toggleFavorite(restaurant.id)}>
+              <div 
+                className="favorite-icon" 
+                onClick={(e) => {
+                  e.stopPropagation();
+                  this.toggleFavorite(restaurantId);
+                }}
+              >
                 {isFavorite ? <HeartFilled style={{ color: "red" }} /> : <HeartOutlined />}
               </div>
             </div>

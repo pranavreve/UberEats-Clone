@@ -1,0 +1,18 @@
+.country-code-select {
+  width: 100%;
+  padding: 10px;
+  font-size: 16px;
+  border: 1px solid #e0e0e0;
+  border-radius: 4px;
+  appearance: none;
+  background-color: #ffffff;
+  background-image: url('data:image/svg+xml;charset=US-ASCII,<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="%23666666"><polygon points="0,0 10,10 20,0"/></svg>');
+  background-repeat: no-repeat;
+  background-position: right 10px top 50%;
+  background-size: 10px 10px;
+}
+
+.country-code-select:focus {
+  outline: none;
+  border-color: #43a422;
+}

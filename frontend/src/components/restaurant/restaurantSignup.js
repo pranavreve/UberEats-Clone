@@ -1,8 +1,8 @@
 import React, { Component } from "react";
 import "./restaurantSignup.css";
-import axios from "axios";
 import ubereatslogo from "../../Images/UberEatsLogo.png";
 import { Navigate } from "react-router-dom";
+import { authAPI, restaurantAPI } from "../../services/api";
 
 class RestaurantSignup extends Component {
   state = {
@@ -21,7 +21,7 @@ class RestaurantSignup extends Component {
     this.setState({ [event.target.name]: event.target.value });
   };
 
-  handleSignup = () => {
+  handleSignup = async () => {
     const {
       name,
       email,
@@ -37,63 +37,59 @@ class RestaurantSignup extends Component {
       return;
     }
 
-    axios
-      .post(
-        `${process.env.REACT_APP_UBEREATS_BACKEND_URL}/restaurant/signup/`,
-        {
-          name,
-          email,
-          password,
-          location,
-          contact,
-          start_time,
-          end_time,
-        }
-      )
-      .then((response) => {
-        if (response.status === 201) {
-          // Automatically log in the restaurant
-          axios
-            .post(
-              `${process.env.REACT_APP_UBEREATS_BACKEND_URL}/restaurant/login/`,
-              { email, password }
-            )
-            .then((loginResponse) => {
-              sessionStorage.setItem("authToken", loginResponse.data.token);
-              sessionStorage.setItem("userType", "restaurant");
-              // Fetch restaurant details
-              axios
-                .get(
-                  `${process.env.REACT_APP_UBEREATS_BACKEND_URL}/restaurant/profile/`,
-                  {
-                    headers: {
-                      Authorization: `Bearer ${loginResponse.data.token}`,
-                    },
-                  }
-                )
-                .then((profileResponse) => {
-                  sessionStorage.setItem(
-                    "restaurantDetails",
-                    JSON.stringify(profileResponse.data)
-                  );
-                  this.setState({ redirectToHome: true });
-                })
-                .catch((error) => {
-                  this.setState({
-                    signupError: "Failed to fetch restaurant details.",
-                  });
-                });
-            })
-            .catch((error) => {
-              this.setState({ signupError: "Failed to log in after signup." });
-            });
-        }
-      })
-      .catch((error) => {
-        const errorMsg =
-          error.response?.data?.error || "Error occurred during signup.";
-        this.setState({ signupError: errorMsg });
+    try {
+      // Register using the updated API service
+      await authAPI.register({
+        name,
+        email,
+        password,
+        user_type: "restaurant",
+        location
       });
+
+      // Login after successful registration
+      const loginResponse = await authAPI.login({
+        email,
+        password
+      });
+
+      // Store auth token
+      sessionStorage.setItem("authToken", loginResponse.data.token);
+      sessionStorage.setItem("userType", "restaurant");
+
+      try {
+        // Get restaurant profile
+        const profileResponse = await restaurantAPI.getProfile();
+        
+        // Store restaurant details
+        sessionStorage.setItem(
+          "restaurantDetails",
+          JSON.stringify(profileResponse.data)
+        );
+        
+        // Update restaurant profile with the additional details
+        await restaurantAPI.updateProfile({
+          name: name,
+          description: "Restaurant description", // Default description
+          location: location,
+          delivery_type: "Both", // Default to both delivery and pickup
+          contact_info: contact,
+          opening_time: start_time,
+          closing_time: end_time
+        });
+        
+        // Redirect to home page
+        this.setState({ redirectToHome: true });
+      } catch (profileError) {
+        this.setState({
+          signupError: "Failed to fetch or update restaurant details."
+        });
+      }
+    } catch (error) {
+      const errorMsg =
+        error.response?.data?.message || "Error occurred during signup.";
+      this.setState({ signupError: errorMsg });
+    }
   };
 
   render() {
